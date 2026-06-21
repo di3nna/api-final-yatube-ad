@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,8 +7,9 @@ SECRET_KEY = 'hhz7l-ltdismtf@bzyz+rple7*s*w$jak%whj@(@u0eok^f9k4'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']  # Разрешаем все хосты для разработки
 
+# Определение приложений
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -18,8 +18,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'api',
-    'posts',
+    'rest_framework.authtoken',          # Для работы токенов (нужно для djoser)
+    'djoser',                            # Для работы с JWT
+    'api',                               # Ваше приложение api
+    'posts',                             # Приложение posts
 ]
 
 MIDDLEWARE = [
@@ -54,7 +56,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'yatube_api.wsgi.application'
 
-
+# База данных
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -62,6 +64,7 @@ DATABASES = {
     }
 }
 
+# Валидация паролей
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -77,24 +80,40 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Интернационализация
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
+# Статические файлы
 STATIC_URL = '/static/'
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
+# Настройки REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',  # Чтение для всех, запись для авторизованных
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT аутентификация
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  # Пагинация
+    'PAGE_SIZE': 10,  # Количество объектов на странице
+}
+
+# Настройки Djoser для работы с пользователями
+DJOSER = {
+    'PERMISSIONS': {
+        'user_list': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+    },
+}
+
+# Настройки JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Время жизни access-токена
+    'AUTH_HEADER_TYPES': ('Bearer',),  # Тип токена в заголовке
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
