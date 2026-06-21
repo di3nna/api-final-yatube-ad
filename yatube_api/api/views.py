@@ -1,6 +1,7 @@
 # api/views.py
 from rest_framework import viewsets, filters, mixins
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.pagination import LimitOffsetPagination
 from django_filters.rest_framework import DjangoFilterBackend
 
 from posts.models import Post, Group, Comment, Follow
@@ -19,6 +20,7 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['group']
+    pagination_class = LimitOffsetPagination  # ← пагинация включена
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -28,11 +30,13 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = None  # ← отключаем пагинацию
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    pagination_class = None  # ← отключаем пагинацию
 
     def get_queryset(self):
         post_id = self.kwargs.get('post_id')
@@ -51,6 +55,7 @@ class FollowViewSet(mixins.ListModelMixin,
     permission_classes = [IsAuthenticatedForWriteOnly]
     filter_backends = [filters.SearchFilter]
     search_fields = ['following__username', 'user__username']
+    pagination_class = None  # ← отключаем пагинацию
 
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)
