@@ -1,5 +1,7 @@
 from rest_framework import viewsets, filters, mixins
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly,
+)
 from django_filters.rest_framework import DjangoFilterBackend
 
 from posts.models import Post, Group, Comment, Follow
@@ -45,3 +47,4 @@ class FollowViewSet(mixins.ListModelMixin,
 
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)
+    
