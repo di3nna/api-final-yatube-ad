@@ -1,7 +1,6 @@
 # api/views.py
 from rest_framework import viewsets, filters, mixins
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.pagination import LimitOffsetPagination
 from django_filters.rest_framework import DjangoFilterBackend
 
 from posts.models import Post, Group, Comment, Follow
@@ -13,6 +12,7 @@ from .serializers import (
 )
 from .permissions import IsAuthorOrReadOnly, IsAuthenticatedForWriteOnly
 from .pagination import OptionalLimitOffsetPagination
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
