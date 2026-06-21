@@ -47,4 +47,5 @@ class FollowViewSet(mixins.ListModelMixin,
 
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)
+
     
