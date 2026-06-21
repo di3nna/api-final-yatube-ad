@@ -12,7 +12,7 @@ from .serializers import (
     FollowSerializer,
 )
 from .permissions import IsAuthorOrReadOnly, IsAuthenticatedForWriteOnly
-
+from .pagination import OptionalLimitOffsetPagination
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -20,7 +20,7 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['group']
-    pagination_class = LimitOffsetPagination  # ← пагинация включена
+    pagination_class = OptionalLimitOffsetPagination  # ← пагинация включена
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
