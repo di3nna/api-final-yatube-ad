@@ -1,3 +1,4 @@
+# api/views.py
 from rest_framework import viewsets, filters, mixins
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
@@ -18,6 +19,9 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['group']
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
@@ -50,3 +54,6 @@ class FollowViewSet(mixins.ListModelMixin,
 
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

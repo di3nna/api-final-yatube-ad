@@ -7,7 +7,9 @@ User = get_user_model()
 
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
-        slug_field='username', read_only=True
+        slug_field='username',
+        read_only=True,
+        default=serializers.CurrentUserDefault()
     )
 
     class Meta:
@@ -23,7 +25,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
-        slug_field='username', read_only=True
+        slug_field='username',
+        read_only=True
     )
 
     class Meta:
